@@ -1,7 +1,8 @@
 from mlctl.interfaces.process import Process
 from mlctl.plugins.utils import parse_config
 import boto3
-
+import time
+import pprint
 
 class AwsSagemakerProcess(Process):
 
@@ -84,8 +85,20 @@ class AwsSagemakerProcess(Process):
             print('Error' + e)
             return str(e)
 
-    def get_process_info(self, training_job_name, hyperparameter_tuning=False):
-        pass
+    def get_process_info(self, job, loop=False):
+        response = self._client.describe_processing_job(ProcessingJobName=job.serialize()['name'])
+        # print(response)
+        if response['ProcessingJobStatus'] == 'InProgress':
+            
+            print('Job in progress')
+            time.sleep(10)
+            
+            return self.get_process_info(job, loop)
+        
+        print('Job Spec:')
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(response)
+        print('Job Completed')
 
     def stop_process(self, training_job_name, hyperparameter_tuning=False):
         pass
