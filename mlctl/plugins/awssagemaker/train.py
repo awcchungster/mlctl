@@ -1,7 +1,8 @@
 from mlctl.interfaces.train import Train
 from mlctl.plugins.utils import parse_config
 import boto3
-
+import time
+import pprint
 
 class AwsSagemakerTrain(Train):
 
@@ -25,7 +26,7 @@ class AwsSagemakerTrain(Train):
 
             # else:
             job_definition = job.serialize()
-
+            print(job_definition)
             # converts everything to string for boto3 API
             hyperparameters = {}
             for key in job_definition['hyperparameters']:
@@ -44,7 +45,7 @@ class AwsSagemakerTrain(Train):
                     'DataSource': {
                         'S3DataSource': {
                             'S3DataType': 'S3Prefix',
-                            'S3Uri': job_definition['data_channels']['input']['train'],
+                            'S3Uri': job_definition['data_channels']['input']['training'],
                             'S3DataDistributionType': 'FullyReplicated',
                         }
                     },
@@ -79,8 +80,21 @@ class AwsSagemakerTrain(Train):
             print('Error' + e)
             return str(e)
 
-    def get_train_info(self, train_job_name):
-        pass
+    def get_train_info(self, job, loop=False):
 
+        response = self._client.describe_training_job(TrainingJobName=job.serialize()['name'])
+        # print(response)
+        if response['TrainingJobStatus'] == 'InProgress':
+            
+            print('Job in progress')
+            time.sleep(10)
+            
+            return self.get_train_info(job, loop)
+        
+        print('Job Spec:')
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(response)
+        print('Job Completed')
+        
     def stop_train(self, train_job_name):
         pass
