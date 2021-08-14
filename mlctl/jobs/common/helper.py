@@ -1,19 +1,29 @@
 def parse_resources(params):
     if type(params) == str:
+        # shortform
+        # resources: Standard_DS2_v2
         return {
             "instance_type": params,
             "instance_count": 1
         }
     elif 'instance' in params:
+        # long form:
+        # resources:
+        #    instance_type: Standard_DS2_v2
+        #    instance_count: 1
         return {
             'instance_type': params['instance_type'],
             'instance_count': params['instance_count']
         }
-    elif 'cpu' in params:
-        return {
-            'cpu': params['cpu'],
-            'memory': params['memory']
+    elif 'requests' in params:
+        # handle kubernetes
+        k8s = {
+            'requests': params['requests']
         }
+
+        if 'limits' in params:
+            k8s['limits'] = params['limits']
+        return k8s
 
 def parse_infrastructure(params):
     '''
@@ -51,6 +61,11 @@ def parse_infrastructure(params):
         if 'resources' in infra:
             iter['resources'] = parse_resources(infra['resources'])
         
+        # k8s managemanet
+        if 'namespace' in infra:
+            iter['namespace'] = infra['namespace']
+
+        # copy this to the specific job type
         if 'job_type' in infra:
             # if selected, save the infra for a specific type
             
@@ -65,6 +80,7 @@ def parse_infrastructure(params):
             # else save as the default option
             infra_options['default'] = iter
     
+<<<<<<< HEAD
     # if there's a default, copy it over to the other jobs
     if 'default' in infra_options:
         for job in options:
@@ -72,6 +88,13 @@ def parse_infrastructure(params):
             if job not in infra_options:
                 # print(f'Copying default infra config to {job}')
                 infra_options[job] = infra_options['default']
+=======
+    for job in options:
+        # save default infra job to all other
+        if job not in infra_options:
+            # print(f'Copying default infra config to {job}')
+            infra_options[job] = infra_options['default']
+>>>>>>> Added setup.py and k8s related job info for mlctl
 
     # print(infra_options)
 
