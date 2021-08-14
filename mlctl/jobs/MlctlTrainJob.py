@@ -52,10 +52,10 @@ class MlctlTrainJob():
                 'input': {},
             }
 
-        # if the user only puts a string, default to train
+        # if the user only puts a string, default to training
         if type(params['input']) == str: 
             self.data_channels['input'].update({
-                'train': params['input']
+                'training': params['input']
             })
         else:
             self.data_channels['input'].update(params['input'])
@@ -98,6 +98,9 @@ class MlctlTrainJob():
         # As a ML engineer, I can override the provider specific YAML job
         if 'train' in params:
             self.infrastructure['train']['resources'] = parse_resources(params['train'])
+
+    def update_name(self, name):
+        self.name = name
 
     def serialize(self):
         return self.__dict__
