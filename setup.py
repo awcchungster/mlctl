@@ -4,11 +4,11 @@ setup(
 
     # Package information
     name="mlctl",
-    use_scm_version={
-        "local_scheme": "no-local-version",
-        "write_to": "mlctl/__version.py",
-        "write_to_template": "__version__ = \"{version}\"\n",
-    },
+    # use_scm_version={
+    #     "local_scheme": "no-local-version",
+    #     "write_to": "mlctl/__version.py",
+    #     "write_to_template": "__version__ = \"{version}\"\n",
+    # },
 
     setup_requires=["setuptools-scm"],
 
@@ -23,8 +23,10 @@ setup(
         'cachetools>=4.2.2',
         'click>=8.0.1',
         'boto3>=1.17.111',
+        'kubernetes>=17.17.0',
         'cookiecutter>=1.7.3',
-        'PyYAML>=5.4.1'
+        'PyYAML>=5.4.1',
+        'Random-Word>=1.0.7'
     ],
 
     maintainer='Intuit ML Platform',
