@@ -51,11 +51,15 @@ def start(profile, provider_config, config):
 @train.command(name="info", help="Get train job information")
 @click.option('--profile', '-pr', envvar='PROFILE', help="credentials profile or file location", metavar='')
 @click.option('--config', '-c', required=False, help="name of train job", metavar='')
-@click.option('--train-job-name', '-t', required=False, help="name of train job", metavar='')
-def info(profile, plugin, train_job_name, hyperparameter_tuning):
-    train = determine_plugin(plugin, profile, 'train')
+@click.option('--provider_config', '-p', envvar='PROVIDER_CONFIG', help="file location for the provider.yaml", metavar='')
+@click.option('--name', '-n', required=False, help="name of train job", metavar='')
+def info(profile, config, provider_config, name):
+    job = parse_train_yamls(config, provider_config)
+    train = determine_infra_plugin_from_job(job, profile)
+    if name:
+        job.update_name(name)
     click.echo(train.get_train_info(
-        train_job_name, hyperparameter_tuning))
+        job))
 
 
 @train.command(name="stop", help="Stop a train job")

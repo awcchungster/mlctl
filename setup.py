@@ -9,6 +9,7 @@ setup(
 
     # Package information
     name="mlctl",
+<<<<<<< HEAD
     description="mlctl is the control plane for MLOps. It provides a CLI and a Python SDK for supporting key operations related to MLOps.",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -17,6 +18,13 @@ setup(
         "write_to": "mlctl/__version.py",
         "write_to_template": "__version__ = \"{version}\"\n",
     },
+=======
+    # use_scm_version={
+    #     "local_scheme": "no-local-version",
+    #     "write_to": "mlctl/__version.py",
+    #     "write_to_template": "__version__ = \"{version}\"\n",
+    # },
+>>>>>>> Added setup.py and k8s related job info for mlctl
 
     setup_requires=["setuptools-scm"],
 
@@ -31,6 +39,7 @@ setup(
         'cachetools>=4.2.2',
         'click>=8.0.1',
         'boto3>=1.17.111',
+        'kubernetes>=17.17.0',
         'cookiecutter>=1.7.3',
         'PyYAML>=5.4.1',
         'RandomWords>=0.3.0',
