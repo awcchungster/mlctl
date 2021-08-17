@@ -1,0 +1,12 @@
+mlctl_version: 0.1
+infrastructure:
+  - name: awssagemaker
+    arn: arn:aws:iam::XXXXXXXXXXXXX:role/XXXXXXXXXXXXX
+    container_repo: XXXXXXXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/XXXXXXXXXXXXX
+resources: 
+  process: 'ml.t3.medium'
+  train: 'ml.m5.large'
+  deploy: 'ml.t2.medium'
+metadata:
+  - name: mlflow
+    tracking_uri: XXXXXXXXXXXXX

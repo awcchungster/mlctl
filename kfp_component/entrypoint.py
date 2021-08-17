@@ -3,17 +3,23 @@ import sys
 import yaml
 import json
 import pprint
+from pathlib import Path
 
 sys.path.insert(0, '..')
 
-from mlctl.clis.common.utils import determine_infra_plugin_from_job, parse_train_yamls, parse_process_yamls, docker_instructions
+from mlctl.clis.common.utils import determine_infra_plugin_from_job, parse_train_yamls, parse_process_yamls, parse_deploy_yamls, docker_instructions
+
+import sys
+print(sys.argv)
 
 parser = argparse.ArgumentParser()
+parser.add_argument("-o", "--output")
 parser.add_argument("-p", "--provider")
 parser.add_argument("-t", "--task")
 parser.add_argument("--metadata")
 parser.add_argument("--envvars")
 parser.add_argument("--data")
+parser.add_argument("--models")
 args = parser.parse_args()
 
 # convert provider.yaml to file
@@ -33,6 +39,9 @@ if args.envvars:
 
 if args.data:
     job_yaml['data'] = json.loads(args.data)
+
+if args.models:
+    job_yaml['models'] = json.loads(args.models)
 
 # figure what task this is
 if args.task:
@@ -70,6 +79,7 @@ elif task == 'train':
         yaml.dump(job_yaml, outfile, default_flow_style=False)
 
     job = parse_train_yamls('./train.yaml', './provider.yaml')
+    # pp.pprint(job.serialize())
     train = determine_infra_plugin_from_job(job)
 
     train_run = train.start_train(job)
@@ -78,8 +88,44 @@ elif task == 'train':
     
     train.get_train_info(job, loop=True)
 
+elif task == 'deploy':
+    with open('./deploy.yaml', 'w') as outfile:
+        yaml.dump(job_yaml, outfile, default_flow_style=False)
+
+    job = parse_deploy_yamls('./deploy.yaml', './provider.yaml')
+    deploy = determine_infra_plugin_from_job(job)
+
+    deploy.create(job)
+    deploy_run = deploy.start_deploy(job)
+    print('Infra Job Spec:')
+    pp.pprint(deploy_run)
+    
+    deploy.get_deploy_info(job, loop=True)
+
 else:
     print("Unknown Task")
+
+# TODO: do not run when in testing mode
+Path("/opt/ml/").mkdir(parents=True, exist_ok=True)
+with open("/opt/ml/outputs", "w") as outfile:
+    json.dump({"success": True}, outfile)
+
+job_type = job.serialize()['job_type']
+infrastructure = job.serialize()['infrastructure'][job_type]['name']
+resources = job.serialize()['infrastructure'][job_type]['resources']
+metadata = {
+   "outputs":[
+      {
+         "storage":"inline",
+         "source":f"## Infrastructure\n### {infrastructure} \n## Resources\n### {resources}\n## Est. Cost\n### $0.15",
+         "type":"markdown"
+      }
+   ]
+}
+
+with open('/mlpipeline-ui-metadata.json', 'w') as metadata_file:
+    json.dump(metadata, metadata_file)
+
 
 # Processing
 # python3 entrypoint.py -p '{"mlctl_version":0.1,"infrastructure":[{"name":"awssagemaker","arn":"arn:aws:iam::436885317446:role/sm-execution","container_repo":"436885317446.dkr.ecr.us-east-1.amazonaws.com/mlctl-test"}],"resources":{"process":"ml.t3.medium","train":"ml.m5.large","deploy":"ml.t2.medium"},"metadata":[{"name":"mlflow","tracking_uri":"http://ec2-34-234-193-241.compute-1.amazonaws.com:5000"}]}' --metadata '{"project": "height_data", "job_type": "process"}' --data '{"input":"s3://mlctltest/example1_data/","output":"s3://mlctltest/example1_output/"}'
