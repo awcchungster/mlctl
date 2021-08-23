@@ -80,7 +80,6 @@ def parse_infrastructure(params):
             # else save as the default option
             infra_options['default'] = iter
     
-
     # if there's a default, copy it over to the other jobs
     if 'default' in infra_options:
         for job in options:

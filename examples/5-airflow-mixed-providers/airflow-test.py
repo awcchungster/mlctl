@@ -1,25 +1,29 @@
+from datetime import timedelta
+
 from mlctl.airflow import DAG, step
-import yaml
+from airflow.utils.dates import days_ago
+
 
 input_data ='s3://mlctltest/example1_data/'
+
+# import yaml
 # with open('provider_local.yaml') as f:
 #     provider = yaml.safe_load(f)
 
-with open('provider_mix.yaml') as f:
-    provider = yaml.safe_load(f)
 
 default_args = {
-    provider=provider,
 }
 with DAG(
-    'airflow-mlctl-example',
+    dag_id='airflow-mlctl-example',
     default_args=default_args,
     description='A simple 3 step workflow',
+    schedule_interval='0 0 * * *',
     start_date=days_ago(2),
+    dagrun_timeout=timedelta(minutes=60),
 ) as dag:
 
     # returns a S3 bucket with the processed data
-    op1 = step.process(name='sk_learn.process', input=input_data, provider=provider)
+    op1 = step.process(func_name='sk_learn.process', input=input_data, provider=provider)
 
     # # returns a model artifact
     # op2 = step.train(name='sk_learn.train', input=op1.output)

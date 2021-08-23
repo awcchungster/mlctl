@@ -9,6 +9,7 @@ setup(
 
     # Package information
     name="mlctl",
+
     description="mlctl is the control plane for MLOps. It provides a CLI and a Python SDK for supporting key operations related to MLOps.",
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -22,7 +23,6 @@ setup(
     #     "write_to": "mlctl/__version.py",
     #     "write_to_template": "__version__ = \"{version}\"\n",
     # },
-
 
     setup_requires=["setuptools-scm"],
 

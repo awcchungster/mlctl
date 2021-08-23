@@ -1,6 +1,6 @@
+from airflow.operators.python import PythonOperator
 
-
-def process(name, input, provider):
+def process(func_name, input, provider):
 
     def process_job(job_spec, provider_spec):
         job = parse_process_specs(job_spec, provider_spec)
@@ -24,10 +24,10 @@ def process(name, input, provider):
     }
 
     return PythonOperator(
-        task_id='mlctl process',
+        task_id='mlctl_process',
         python_callable=process_job,
         op_kwargs={
-            'job_spec': job_spec
+            'job_spec': job_spec,
             'provider_spec': provider},
     )
 
