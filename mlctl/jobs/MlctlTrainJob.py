@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from random_words import RandomWords
+=======
+from random_word import RandomWords
+>>>>>>> bbc03552ddfc9c1d67faeaf22e43bcbe7308e51f
 import json
 
 from mlctl.jobs.common.helper import parse_infrastructure, parse_resources
@@ -12,8 +16,13 @@ class MlctlTrainJob():
             self.name = name
         else:
             # else make a new name randomly
+<<<<<<< HEAD
             word = RandomWords().random_word()
             self.name = f'mlctl-train-{word}'
+=======
+            words = RandomWords().get_random_words()
+            self.name = f'mlctl-train-{words[0]}'
+>>>>>>> bbc03552ddfc9c1d67faeaf22e43bcbe7308e51f
 
         self.job_type = job_type
         self.project = project

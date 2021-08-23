@@ -9,7 +9,10 @@ setup(
         'sklearn',
         'pandas',
         'scipy',
+<<<<<<< HEAD
         'mlsriracha'
+=======
+>>>>>>> bbc03552ddfc9c1d67faeaf22e43bcbe7308e51f
     ],
     dockerlines=[],
     python_version='3.6',

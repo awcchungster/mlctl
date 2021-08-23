@@ -80,7 +80,7 @@ def parse_infrastructure(params):
             # else save as the default option
             infra_options['default'] = iter
     
-<<<<<<< HEAD
+
     # if there's a default, copy it over to the other jobs
     if 'default' in infra_options:
         for job in options:
@@ -88,13 +88,6 @@ def parse_infrastructure(params):
             if job not in infra_options:
                 # print(f'Copying default infra config to {job}')
                 infra_options[job] = infra_options['default']
-=======
-    for job in options:
-        # save default infra job to all other
-        if job not in infra_options:
-            # print(f'Copying default infra config to {job}')
-            infra_options[job] = infra_options['default']
->>>>>>> Added setup.py and k8s related job info for mlctl
 
     # print(infra_options)
 
